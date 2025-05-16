@@ -1,19 +1,27 @@
 <!DOCTYPE html>
 <html lang="pt-BR">
 <head>
+    <!-- Define a codificação de caracteres como UTF-8 para suportar caracteres especiais -->
     <meta charset="UTF-8">
+    <!-- Configura a responsividade para dispositivos móveis -->
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Chat</title>
+    <!-- Importa o CSS do Bootstrap para estilização -->
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <!-- Importa um arquivo CSS personalizado -->
     <link rel="stylesheet" href="/estilo.css">
 </head>
 <body>
+    <!-- Barra de navegação fixa com Bootstrap -->
     <nav class="navbar navbar-expand-lg navbar-dark bg-dark">
         <div class="container">
+            <!-- Título ou marca da aplicação -->
             <a class="navbar-brand" href="#">Memórias</a>
+            <!-- Botão para dispositivos móveis que expande o menu -->
             <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
                 <span class="navbar-toggler-icon"></span>
             </button>
+            <!-- Links de navegação -->
             <div class="collapse navbar-collapse" id="navbarNav">
                 <ul class="navbar-nav ms-auto">
                     <li class="nav-item"><a class="nav-link" href="index.html">Início</a></li>
@@ -26,96 +34,128 @@
         </div>
     </nav>
 
+    <!-- Container principal para o conteúdo da página -->
     <div class="container mt-4">
+        <!-- Formulário para inserir o nome do usuário -->
         <div id="usernameForm" class="card p-4 mb-4">
             <h2 class="text-center mb-3">Entrar no Chat</h2>
             <form id="joinForm">
                 <div class="mb-3">
                     <label for="username" class="form-label">Seu Nome</label>
+                    <!-- Campo de entrada para o nome do usuário -->
                     <input type="text" class="form-control" id="username" required>
                 </div>
+                <!-- Botão para enviar o formulário e entrar no chat -->
                 <button type="submit" class="btn btn-primary w-100">Entrar</button>
             </form>
         </div>
 
+        <!-- Área do chat, inicialmente oculta -->
         <div id="chatArea" class="card p-4" style="display: none;">
             <h2 class="text-center mb-3">Chat</h2>
+            <!-- Área onde as mensagens do chat serão exibidas -->
             <div id="messages" class="mb-3" style="height: 300px; overflow-y: auto;"></div>
+            <!-- Formulário para enviar mensagens -->
             <form id="messageForm">
                 <div class="input-group">
+                    <!-- Campo de entrada para a mensagem -->
                     <input type="text" class="form-control" id="message" placeholder="Digite sua mensagem..." required>
+                    <!-- Botão para enviar a mensagem -->
                     <button type="submit" class="btn btn-primary">Enviar</button>
                 </div>
             </form>
         </div>
     </div>
 
+    <!-- Importa o JavaScript do Bootstrap -->
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
     <script>
+        // Variável global para armazenar a conexão WebSocket
         let ws = null;
+        // Referências aos elementos do DOM
         const usernameForm = document.getElementById('usernameForm');
         const chatArea = document.getElementById('chatArea');
         const messages = document.getElementById('messages');
         const messageForm = document.getElementById('messageForm');
         const joinForm = document.getElementById('joinForm');
 
+        // Manipula o envio do formulário de entrada no chat
         joinForm.addEventListener('submit', (e) => {
-            e.preventDefault();
+            e.preventDefault(); // Impede o comportamento padrão do formulário
             const username = document.getElementById('username').value.trim();
             if (username) {
+                // Oculta o formulário de entrada e exibe a área do chat
                 usernameForm.style.display = 'none';
                 chatArea.style.display = 'block';
+                // Inicia a conexão WebSocket
                 connectWebSocket(username);
             }
         });
 
+        // Função para conectar ao servidor WebSocket
         function connectWebSocket(username) {
+            // Determina o protocolo (ws ou wss) com base no protocolo da página
             const protocol = window.location.protocol === 'https:' ? 'wss:' : 'ws:';
             ws = new WebSocket(`${protocol}//${window.location.host}/ws?username=${encodeURIComponent(username)}`);
 
+            // Executado quando a conexão é estabelecida
             ws.onopen = () => {
                 addMessage('server', 'Conectado ao servidor!');
             };
 
+            // Executado quando uma mensagem é recebida
             ws.onmessage = (event) => {
                 try {
                     const data = JSON.parse(event.data);
                     if (data.type === 'server') {
+                        // Adiciona mensagem do servidor
                         addMessage('server', data.message);
                     } else if (data.type === 'user') {
+                        // Adiciona mensagem de outro usuário
                         addMessage(data.username, data.message);
                     }
                 } catch (error) {
+                    // Exibe erro caso a mensagem não possa ser processada
                     addMessage('server', 'Erro ao processar mensagem: ' + error.message);
                 }
             };
 
+            // Executado quando a conexão é fechada
             ws.onclose = () => {
                 addMessage('server', 'Desconectado do servidor. Tente recarregar a página.');
+                // Reverte para o formulário de entrada
                 chatArea.style.display = 'none';
                 usernameForm.style.display = 'block';
             };
 
+            // Executado em caso de erro na conexão
             ws.onerror = () => {
                 addMessage('server', 'Erro na conexão com o servidor.');
             };
         }
 
+        // Manipula o envio de mensagens
         messageForm.addEventListener('submit', (e) => {
-            e.preventDefault();
+            e.preventDefault(); // Impede o comportamento padrão do formulário
             const message = document.getElementById('message').value.trim();
             if (message && ws && ws.readyState === WebSocket.OPEN) {
+                // Envia a mensagem ao servidor via WebSocket
                 ws.send(JSON.stringify({ type: 'message', message }));
+                // Adiciona a mensagem ao chat localmente
                 addMessage('Você', message);
+                // Limpa o campo de entrada
                 document.getElementById('message').value = '';
             }
         });
 
+        // Função para adicionar mensagens à área de mensagens
         function addMessage(sender, message) {
             const messageElement = document.createElement('div');
+            // Alinha mensagens do usuário à direita
             messageElement.className = sender === 'Você' ? 'text-end mb-2' : 'mb-2';
             messageElement.innerHTML = `<strong>${sender}:</strong> ${message}`;
             messages.appendChild(messageElement);
+            // Rola automaticamente para a última mensagem
             messages.scrollTop = messages.scrollHeight;
         }
     </script>

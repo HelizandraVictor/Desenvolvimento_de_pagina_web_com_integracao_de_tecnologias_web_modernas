@@ -1,20 +1,27 @@
 <!DOCTYPE html>
 <html lang="pt-BR">
 <head>
+    <!-- Define a codificação de caracteres como UTF-8 para suportar caracteres especiais -->
     <meta charset="UTF-8">
+    <!-- Configura a responsividade para dispositivos móveis -->
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Favoritos</title>
+    <!-- Importa o CSS do Bootstrap para estilização -->
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <!-- Importa um arquivo CSS personalizado -->
     <link rel="stylesheet" href="/estilo.css">
 </head>
 <body>
-    <!-- Navbar -->
+    <!-- Barra de navegação fixa com Bootstrap -->
     <nav class="navbar navbar-expand-lg navbar-dark bg-dark">
         <div class="container">
+            <!-- Título ou marca da aplicação -->
             <a class="navbar-brand" href="#">Memórias</a>
+            <!-- Botão para dispositivos móveis que expande o menu -->
             <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
                 <span class="navbar-toggler-icon"></span>
             </button>
+            <!-- Links de navegação -->
             <div class="collapse navbar-collapse" id="navbarNav">
                 <ul class="navbar-nav ms-auto">
                     <li class="nav-item"><a class="nav-link" href="index.html">Início</a></li>
@@ -27,49 +34,65 @@
         </div>
     </nav>
 
-    <!-- Lista de Favoritos -->
+    <!-- Container principal para a lista de memórias favoritas -->
     <div class="container mt-4">
+        <!-- Título da página -->
         <h1 class="text-center mb-4">Memórias Favoritas</h1>
+        <!-- Área onde as memórias favoritas serão exibidas em formato de grade -->
         <div id="favoritesList" class="row"></div>
     </div>
 
-    <!-- Modal para Mensagens de Feedback -->
+    <!-- Modal para exibir mensagens de feedback -->
     <div class="modal fade" id="feedbackModal" tabindex="-1" aria-labelledby="feedbackModalLabel" aria-hidden="true">
         <div class="modal-dialog">
             <div class="modal-content">
                 <div class="modal-header">
+                    <!-- Título do modal -->
                     <h5 class="modal-title" id="feedbackModalLabel">Notificação</h5>
+                    <!-- Botão para fechar o modal -->
                     <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                 </div>
                 <div class="modal-body">
+                    <!-- Área onde a mensagem de feedback será exibida -->
                     <p id="feedbackMessage"></p>
+                    <!-- Botão para fechar o modal -->
                     <button type="button" class="btn btn-primary" data-bs-dismiss="modal">OK</button>
                 </div>
             </div>
         </div>
     </div>
 
+    <!-- Importa o JavaScript do Bootstrap para funcionalidades como modais -->
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
     <script>
-        // Função para carregar memórias favoritas
+        // Função para carregar memórias favoritas do servidor
         async function loadFavorites() {
             try {
+                // Faz uma requisição GET para obter memórias marcadas como favoritas
                 const response = await fetch('/api/memories?favorite=true');
                 const favorites = await response.json();
+                // Obtém a referência à área onde as memórias serão exibidas
                 const favoritesList = document.getElementById('favoritesList');
+                // Limpa o conteúdo anterior
                 favoritesList.innerHTML = '';
+                // Itera sobre as memórias favoritas e cria um card para cada uma
                 favorites.forEach(memory => {
                     const card = document.createElement('div');
                     card.className = 'col-md-4 mb-3';
                     card.innerHTML = `
                         <div class="memory-card">
                             <div>
+                                <!-- Exibe o nome da memória -->
                                 <h5>${memory.name}</h5>
+                                <!-- Exibe a idade associada à memória -->
                                 <p>Idade: ${memory.age}</p>
+                                <!-- Exibe a categoria da memória -->
                                 <p>Categoria: ${memory.category}</p>
+                                <!-- Exibe a descrição da memória -->
                                 <p>${memory.description}</p>
                             </div>
                             <div>
+                                <!-- Botão para desfavoritar a memória -->
                                 <button class="btn btn-sm btn-warning unfavorite-btn" data-id="${memory._id}">Desfavoritar</button>
                             </div>
                         </div>
@@ -77,33 +100,42 @@
                     favoritesList.appendChild(card);
                 });
 
-                // Adiciona eventos aos botões de desfavoritar
+                // Adiciona eventos de clique aos botões de desfavoritar
                 document.querySelectorAll('.unfavorite-btn').forEach(btn => {
                     btn.addEventListener('click', async (e) => {
+                        // Obtém o ID da memória a partir do atributo data-id
                         const id = e.target.dataset.id;
                         try {
+                            // Faz uma requisição PATCH para desfavoritar a memória
                             const response = await fetch(`/api/memories/${id}/favorite`, { method: 'PATCH' });
                             const result = await response.json();
-                            showFeedback(result.message); // Exibe "Memória desfavoritada!"
+                            // Exibe a mensagem de feedback (ex.: "Memória desfavoritada!")
+                            showFeedback(result.message);
+                            // Recarrega a lista de favoritos
                             loadFavorites();
                         } catch (error) {
+                            // Exibe mensagem de erro caso a requisição falhe
                             showFeedback('Erro ao desfavoritar memória: ' + error.message);
                         }
                     });
                 });
             } catch (error) {
+                // Exibe mensagem de erro caso a requisição inicial falhe
                 showFeedback('Erro ao carregar favoritos: ' + error.message);
             }
         }
 
-        // Função para exibir mensagens no modal
+        // Função para exibir mensagens no modal de feedback
         function showFeedback(message) {
+            // Inicializa o modal do Bootstrap
             const modal = new bootstrap.Modal(document.getElementById('feedbackModal'));
+            // Define o texto da mensagem no modal
             document.getElementById('feedbackMessage').textContent = message;
+            // Exibe o modal
             modal.show();
         }
 
-        // Carrega os favoritos ao iniciar
+        // Carrega as memórias favoritas ao carregar a página
         loadFavorites();
     </script>
 </body>

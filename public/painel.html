@@ -1,21 +1,29 @@
 <!DOCTYPE html>
 <html lang="pt-BR">
 <head>
+    <!-- Define a codificação de caracteres como UTF-8 para suportar caracteres especiais -->
     <meta charset="UTF-8">
+    <!-- Configura a responsividade para dispositivos móveis -->
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Relatórios</title>
+    <!-- Importa o CSS do Bootstrap para estilização -->
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <!-- Importa um arquivo CSS personalizado -->
     <link rel="stylesheet" href="estilo.css">
+    <!-- Importa a biblioteca Chart.js para criar gráficos -->
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 </head>
 <body>
-    <!-- Navbar para navegação -->
+    <!-- Barra de navegação fixa com Bootstrap -->
     <nav class="navbar navbar-expand-lg">
         <div class="container-fluid">
+            <!-- Título ou marca da aplicação -->
             <a class="navbar-brand" href="#">Relatorios memorias</a>
+            <!-- Botão para dispositivos móveis que expande o menu -->
             <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
                 <span class="navbar-toggler-icon"></span>
             </button>
+            <!-- Links de navegação -->
             <div class="collapse navbar-collapse" id="navbarNav">
                 <ul class="navbar-nav ms-auto">
                     <li class="nav-item"><a class="nav-link" href="index.html">Início</a></li>
@@ -29,11 +37,14 @@
         </div>
     </nav>
 
+    <!-- Container principal para os relatórios -->
     <div class="container">
+        <!-- Título da página -->
         <h1>Relatórios</h1>
         <!-- Filtros de período -->
         <div class="form-group">
             <label>Filtrar por:</label>
+            <!-- Menu suspenso para selecionar o período do relatório -->
             <select class="form-control" id="period-filter">
                 <option value="year">Ano</option>
                 <option value="month">Mês</option>
@@ -41,77 +52,86 @@
             </select>
         </div>
 
-        <!-- Estatísticas -->
+        <!-- Seção de estatísticas -->
         <h2>Estatísticas</h2>
         <div>
+            <!-- Exibe o total de memórias -->
             <p>Total de Memórias: <span id="total-memories">0</span></p>
+            <!-- Exibe o total de memórias favoritas -->
             <p>Memórias Favoritas: <span id="favorite-memories">0</span></p>
         </div>
 
-        <!-- Gráficos -->
+        <!-- Seção de gráficos -->
         <h2>Gráficos</h2>
         <div>
             <h3>Memórias por Período</h3>
+            <!-- Canvas para o gráfico de barras de memórias por período -->
             <canvas id="memoriesByPeriod"></canvas>
         </div>
         <div>
             <h3>Favoritas por Categoria</h3>
+            <!-- Canvas para o gráfico de pizza de memórias favoritas por categoria -->
             <canvas id="favoritesByCategory"></canvas>
         </div>
     </div>
 
-    <!-- Scripts -->
+    <!-- Importa o JavaScript do Bootstrap para funcionalidades como a barra de navegação -->
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
     <script>
         // Função para carregar estatísticas e gráficos
         function loadReports(period = 'year') {
+            // Faz uma requisição GET para obter os dados do relatório com base no período
             fetch(`/api/reports?period=${period}`)
                 .then(response => response.json())
                 .then(data => {
-                    // Atualizar estatísticas
+                    // Atualiza as estatísticas exibidas na página
                     document.getElementById('total-memories').textContent = data.totalMemories;
                     document.getElementById('favorite-memories').textContent = data.favoriteMemories;
 
-                    // Gráfico de memórias por período
+                    // Gráfico de memórias por período (gráfico de barras)
                     const ctxPeriod = document.getElementById('memoriesByPeriod').getContext('2d');
                     new Chart(ctxPeriod, {
-                        type: 'bar',
+                        type: 'bar', // Tipo de gráfico
                         data: {
-                            labels: data.periodLabels,
+                            labels: data.periodLabels, // Rótulos para os períodos (ex.: anos, meses, semanas)
                             datasets: [{
                                 label: 'Memórias por Período',
-                                data: data.periodData,
-                                backgroundColor: 'rgba(52, 152, 219, 0.5)',
+                                data: data.periodData, // Dados para cada período
+                                backgroundColor: 'rgba(52, 152, 219, 0.5)', // Cor de fundo das barras
                             }]
                         },
-                        options: { scales: { y: { beginAtZero: true } } }
+                        options: {
+                            scales: {
+                                y: { beginAtZero: true } // Garante que o eixo Y comece do zero
+                            }
+                        }
                     });
 
-                    // Gráfico de favoritas por categoria
+                    // Gráfico de memórias favoritas por categoria (gráfico de pizza)
                     const ctxCategory = document.getElementById('favoritesByCategory').getContext('2d');
                     new Chart(ctxCategory, {
-                        type: 'pie',
+                        type: 'pie', // Tipo de gráfico
                         data: {
-                            labels: ['Família', 'Lazer', 'Conquista', 'Viagens', 'Trabalho'],
+                            labels: ['Família', 'Lazer', 'Conquista', 'Viagens', 'Trabalho'], // Rótulos das categorias
                             datasets: [{
                                 label: 'Favoritas por Categoria',
-                                data: data.favoriteCategories,
+                                data: data.favoriteCategories, // Dados para cada categoria
                                 backgroundColor: [
-                                    '#FF6384', '#36A2EB', '#FFCE56', '#4BC0C0', '#9966FF'
+                                    '#FF6384', '#36A2EB', '#FFCE56', '#4BC0C0', '#9966FF' // Cores para cada categoria
                                 ]
                             }]
                         }
                     });
                 })
-                .catch(error => alert('Erro ao carregar relatórios: ' + error));
+                .catch(error => alert('Erro ao carregar relatórios: ' + error)); // Exibe alerta em caso de erro
         }
 
-        // Atualizar relatórios ao mudar filtro
+        // Atualiza os relatórios quando o filtro de período é alterado
         document.getElementById('period-filter').addEventListener('change', function() {
-            loadReports(this.value);
+            loadReports(this.value); // Chama a função loadReports com o novo período selecionado
         });
 
-        // Carregar relatórios ao iniciar
+        // Carrega os relatórios ao iniciar a página, usando o período padrão 'year'
         loadReports();
     </script>
 </body>
