@@ -1,0 +1,276 @@
+/* Estilo geral para o corpo da página */
+body {
+    font-family: 'Arial', sans-serif;
+    background-color: #f8f9fa;
+}
+
+/* Estilo da barra de navegação */
+.navbar {
+    background-color: #343a40;
+    padding: 1rem;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+.navbar-brand, .nav-link {
+    color: #ffffff !important;
+}
+
+.nav-link:hover {
+    color: #cccccc !important;
+}
+
+/* Estilo dos formulários */
+.form-group {
+    margin-bottom: 1.5rem;
+}
+
+.form-control {
+    border-radius: 0.5rem;
+    transition: border-color 0.3s ease;
+}
+
+.form-control:focus {
+    border-color: #007bff;
+    box-shadow: 0 0 5px rgba(0, 123, 255, 0.5);
+}
+
+/* Estilo dos cartões de memórias */
+.memory-card {
+    background-color: #ffffff;
+    border-radius: 0.5rem;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    padding: 1.5rem;
+    margin-bottom: 1.5rem;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    transition: transform 0.2s ease;
+}
+
+.memory-card:hover {
+    transform: translateY(-5px);
+}
+
+.memory-card div:last-child {
+    display: flex;
+    gap: 0.5rem;
+}
+
+.memory-card .btn {
+    border-radius: 0.3rem;
+    padding: 0.25rem 0.75rem;
+    font-size: 0.875rem;
+    transition: background-color 0.3s, transform 0.2s;
+}
+
+/* Estilo dos botões */
+.btn {
+    transition: background-color 0.3s, transform 0.2s;
+}
+
+.btn:hover {
+    transform: translateY(-2px);
+}
+
+.btn-warning:hover {
+    background-color: #e0a800;
+    border-color: #d39e00;
+}
+
+.btn-info:hover {
+    background-color: #138496;
+    border-color: #117a8b;
+}
+
+.btn-danger:hover {
+    background-color: #c82333;
+    border-color: #bd2130;
+}
+
+/* Estilo dos modais de feedback e edição */
+.modal-content {
+    border-radius: 0.5rem;
+    border: none;
+    box-shadow: 0 8px 16px rgba(0, 0, 0, 0.2);
+    animation: modalFadeIn 0.3s ease;
+}
+
+.modal-header {
+    background-color: #007bff;
+    color: #ffffff;
+    border-bottom: none;
+    padding: 1rem 1.5rem;
+}
+
+.modal-title {
+    font-weight: bold;
+}
+
+.btn-close {
+    filter: invert(1);
+}
+
+.modal-body {
+    padding: 2rem;
+}
+
+.modal-body p {
+    margin-bottom: 1.5rem;
+    font-size: 1rem;
+    color: #333;
+}
+
+.modal-body .form-group {
+    margin-bottom: 1rem;
+}
+
+.modal-body .form-control {
+    border: 1px solid #ced4da;
+}
+
+.modal-body .btn {
+    padding: 0.75rem;
+    border-radius: 0.3rem;
+    font-size: 1rem;
+    transition: background-color 0.3s ease;
+}
+
+.modal-body .btn-primary {
+    background-color: #007bff;
+    border-color: #007bff;
+    width: 100%;
+}
+
+.modal-body .btn-primary:hover {
+    background-color: #0056b3;
+    border-color: #004085;
+}
+
+.modal-body .btn-secondary {
+    background-color: #6c757d;
+    border-color: #6c757d;
+    width: 100%;
+}
+
+.modal-body .btn-secondary:hover {
+    background-color: #5a6268;
+    border-color: #545b62;
+}
+
+.modal-body .btn-danger {
+    background-color: #dc3545;
+    border-color: #dc3545;
+    width: 100%;
+}
+
+.modal-body .btn-danger:hover {
+    background-color: #c82333;
+    border-color: #bd2130;
+}
+
+/* Estilo do chat */
+#chat-container {
+    border: 1px solid #ced4da;
+    border-radius: 0.5rem;
+    padding: 1rem;
+    height: 400px;
+    display: flex;
+    flex-direction: column;
+}
+
+#chat-messages {
+    flex-grow: 1;
+    overflow-y: auto;
+    margin-bottom: 1rem;
+}
+
+.user-message {
+    text-align: right;
+    color: #007bff;
+}
+
+.auto-message {
+    text-align: left;
+    color: #6c757d;
+}
+
+.waiting-message {
+    text-align: center;
+    color: #dc3545;
+}
+
+/* Estilo para mensagens no chat */
+#messages {
+    border: 1px solid #ddd;
+    border-radius: 4px;
+    padding: 10px;
+    background-color: #fff;
+}
+
+/* Estilo para elementos canvas (gráfico de pizza) */
+canvas {
+    max-width: 300px; /* Reduzido para um tamanho menor */
+    height: 300px; /* Altura proporcional */
+    width: 100%; /* Garante responsividade */
+}
+
+/* Animações */
+@keyframes modalFadeIn {
+    from { transform: scale(0.8); opacity: 0; }
+    to { transform: scale(1); opacity: 1; }
+}
+
+/* Media queries para responsividade */
+@media (max-width: 768px) {
+    .memory-card {
+        flex-direction: column;
+        align-items: flex-start;
+        padding: 1rem;
+    }
+
+    .memory-card div:last-child {
+        flex-direction: column;
+        width: 100%;
+    }
+
+    .memory-card .btn {
+        width: 100%;
+        margin-bottom: 0.5rem;
+    }
+
+    .modal-body {
+        padding: 1.5rem;
+    }
+
+    .modal-body .btn {
+        font-size: 0.9rem;
+    }
+
+    canvas {
+        max-width: 250px; /* Ajuste para telas menores */
+        height: 250px;
+    }
+}
+
+@media (max-width: 576px) {
+    .container {
+        padding: 10px;
+    }
+
+    h1 {
+        font-size: 1.5rem;
+    }
+
+    .form-control {
+        font-size: 0.9rem;
+    }
+
+    .modal-body .btn {
+        font-size: 0.9rem;
+    }
+
+    canvas {
+        max-width: 200px; /* Ajuste para telas muito pequenas */
+        height: 200px;
+    }
+}

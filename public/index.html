@@ -1,0 +1,308 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Registro de Memórias</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="/estilo.css">
+</head>
+<body>
+    <!-- Navbar -->
+    <nav class="navbar navbar-expand-lg navbar-dark bg-dark">
+        <div class="container">
+            <a class="navbar-brand" href="#">Memórias</a>
+            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+            <div class="collapse navbar-collapse" id="navbarNav">
+                <ul class="navbar-nav ms-auto">
+                    <li class="nav-item"><a class="nav-link active" href="index.html">Início</a></li>
+                    <li class="nav-item"><a class="nav-link" href="favoritos.html">Favoritos</a></li>
+                    <li class="nav-item"><a class="nav-link" href="chat.html">Chat</a></li>
+                    <li class="nav-item"><a class="nav-link" href="painel.html">Relatórios</a></li>
+                    <li class="nav-item"><a class="nav-link" href="sobre.html">Sobre</a></li>
+                </ul>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Formulário de Registro -->
+    <div class="container mt-4">
+        <h1 class="text-center mb-4">Registrar Memória</h1>
+        <form id="memoryForm" class="mb-4">
+            <div class="mb-3">
+                <label for="name" class="form-label">Nome</label>
+                <input type="text" class="form-control" id="name" required>
+            </div>
+            <div class="mb-3">
+                <label for="age" class="form-label">Idade</label>
+                <input type="number" class="form-control" id="age" required>
+            </div>
+            <div class="mb-3">
+                <label for="category" class="form-label">Categoria</label>
+                <select class="form-select" id="category" required>
+                    <option value="Família">Família</option>
+                    <option value="Lazer">Lazer</option>
+                    <option value="Conquista">Conquista</option>
+                    <option value="Viagens">Viagens</option>
+                    <option value="Trabalho">Trabalho</option>
+                </select>
+            </div>
+            <div class="mb-3">
+                <label for="description" class="form-label">Descrição</label>
+                <textarea class="form-control" id="description" rows="4" required></textarea>
+            </div>
+            <button type="submit" class="btn btn-primary">Registrar</button>
+        </form>
+
+        <!-- Lista de Memórias -->
+        <h2 class="mb-3">Memórias Registradas</h2>
+        <div class="mb-3">
+            <label for="filterCategory" class="form-label">Filtrar por Categoria</label>
+            <select class="form-select" id="filterCategory">
+                <option value="Todas">Todas</option>
+                <option value="Família">Família</option>
+                <option value="Lazer">Lazer</option>
+                <option value="Conquista">Conquista</option>
+                <option value="Viagens">Viagens</option>
+                <option value="Trabalho">Trabalho</option>
+            </select>
+        </div>
+        <div id="memoriesList" class="row"></div>
+    </div>
+
+    <!-- Modal para Edição -->
+    <div class="modal fade" id="editModal" tabindex="-1" aria-labelledby="editModalLabel" aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="editModalLabel">Editar Memória</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <form id="editForm">
+                        <input type="hidden" id="editId">
+                        <div class="mb-3">
+                            <label for="editName" class="form-label">Nome</label>
+                            <input type="text" class="form-control" id="editName" required>
+                        </div>
+                        <div class="mb-3">
+                            <label for="editAge" class="form-label">Idade</label>
+                            <input type="number" class="form-control" id="editAge" required>
+                        </div>
+                        <div class="mb-3">
+                            <label for="editCategory" class="form-label">Categoria</label>
+                            <select class="form-select" id="editCategory" required>
+                                <option value="Família">Família</option>
+                                <option value="Lazer">Lazer</option>
+                                <option value="Conquista">Conquista</option>
+                                <option value="Viagens">Viagens</option>
+                                <option value="Trabalho">Trabalho</option>
+                            </select>
+                        </div>
+                        <div class="mb-3">
+                            <label for="editDescription" class="form-label">Descrição</label>
+                            <textarea class="form-control" id="editDescription" rows="4" required></textarea>
+                        </div>
+                        <button type="submit" class="btn btn-primary">Salvar</button>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Modal para Mensagens de Feedback -->
+    <div class="modal fade" id="feedbackModal" tabindex="-1" aria-labelledby="feedbackModalLabel" aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="feedbackModalLabel">Notificação</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <p id="feedbackMessage"></p>
+                    <button type="button" class="btn btn-primary" data-bs-dismiss="modal">OK</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Modal de Confirmação para Exclusão -->
+    <div class="modal fade" id="confirmModal" tabindex="-1" aria-labelledby="confirmModalLabel" aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="confirmModalLabel">Confirmação</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <p id="confirmMessage">Deseja excluir esta memória?</p>
+                    <div class="d-flex justify-content-end gap-2">
+                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancelar</button>
+                        <button type="button" class="btn btn-danger" id="confirmDelete">Excluir</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    <script>
+        // Seleciona o formulário de registro
+        document.getElementById('memoryForm').addEventListener('submit', async (e) => {
+            e.preventDefault();
+            const memory = {
+                name: document.getElementById('name').value,
+                age: parseInt(document.getElementById('age').value),
+                category: document.getElementById('category').value,
+                description: document.getElementById('description').value
+            };
+            try {
+                const response = await fetch('/api/memories', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify(memory)
+                });
+                const result = await response.json();
+                showFeedback(result.message); // Exibe "Memória registrada com sucesso!"
+                document.getElementById('memoryForm').reset();
+                loadMemories();
+            } catch (error) {
+                showFeedback('Erro ao registrar memória: ' + error.message);
+            }
+        });
+
+        // Adiciona evento para o filtro de categoria
+        document.getElementById('filterCategory').addEventListener('change', loadMemories);
+
+        // Função para carregar as memórias
+        async function loadMemories() {
+            const category = document.getElementById('filterCategory').value;
+            try {
+                const response = await fetch(`/api/memories?category=${category}`);
+                const memories = await response.json();
+                const memoriesList = document.getElementById('memoriesList');
+                memoriesList.innerHTML = '';
+                memories.forEach(memory => {
+                    const card = document.createElement('div');
+                    card.className = 'col-md-4 mb-3';
+                    card.innerHTML = `
+                        <div class="memory-card">
+                            <div>
+                                <h5>${memory.name}</h5>
+                                <p>Idade: ${memory.age}</p>
+                                <p>Categoria: ${memory.category}</p>
+                                <p>${memory.description}</p>
+                            </div>
+                            <div>
+                                <button class="btn btn-sm ${memory.favorite ? 'btn-warning' : 'btn-outline-warning'} favorite-btn" data-id="${memory._id}">
+                                    ${memory.favorite ? 'Desfavoritar' : 'Favoritar'}
+                                </button>
+                                <button class="btn btn-sm btn-primary edit-btn" data-id="${memory._id}">Editar</button>
+                                <button class="btn btn-sm btn-danger delete-btn" data-id="${memory._id}">Excluir</button>
+                            </div>
+                        </div>
+                    `;
+                    memoriesList.appendChild(card);
+                });
+
+                // Adiciona eventos aos botões de favoritar
+                document.querySelectorAll('.favorite-btn').forEach(btn => {
+                    btn.addEventListener('click', async (e) => {
+                        const id = e.target.dataset.id;
+                        try {
+                            const response = await fetch(`/api/memories/${id}/favorite`, { method: 'PATCH' });
+                            const result = await response.json();
+                            showFeedback(result.message); // Exibe "Memória favoritada!" ou "Memória desfavoritada!"
+                            loadMemories();
+                        } catch (error) {
+                            showFeedback('Erro ao atualizar favorito: ' + error.message);
+                        }
+                    });
+                });
+
+                // Adiciona eventos aos botões de edição
+                document.querySelectorAll('.edit-btn').forEach(btn => {
+                    btn.addEventListener('click', async (e) => {
+                        const id = e.target.dataset.id;
+                        const response = await fetch(`/api/memories`);
+                        const memories = await response.json();
+                        const memory = memories.find(m => m._id === id);
+                        document.getElementById('editId').value = memory._id;
+                        document.getElementById('editName').value = memory.name;
+                        document.getElementById('editAge').value = memory.age;
+                        document.getElementById('editCategory').value = memory.category;
+                        document.getElementById('editDescription').value = memory.description;
+                        new bootstrap.Modal(document.getElementById('editModal')).show();
+                    });
+                });
+
+                // Adiciona eventos aos botões de exclusão
+                document.querySelectorAll('.delete-btn').forEach(btn => {
+                    btn.addEventListener('click', (e) => {
+                        const id = e.target.dataset.id;
+                        showConfirmDelete(id); // Exibe modal de confirmação
+                    });
+                });
+            } catch (error) {
+                showFeedback('Erro ao carregar memórias: ' + error.message);
+            }
+        }
+
+        // Manipula o formulário de edição
+        document.getElementById('editForm').addEventListener('submit', async (e) => {
+            e.preventDefault();
+            const memory = {
+                name: document.getElementById('editName').value,
+                age: parseInt(document.getElementById('editAge').value),
+                category: document.getElementById('editCategory').value,
+                description: document.getElementById('editDescription').value
+            };
+            const id = document.getElementById('editId').value;
+            try {
+                const response = await fetch(`/api/memories/${id}`, {
+                    method: 'PUT',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify(memory)
+                });
+                const result = await response.json();
+                showFeedback(result.message); // Exibe "Memória atualizada!"
+                bootstrap.Modal.getInstance(document.getElementById('editModal')).hide();
+                loadMemories();
+            } catch (error) {
+                showFeedback('Erro ao atualizar memória: ' + error.message);
+            }
+        });
+
+        // Função para exibir mensagens no modal de feedback
+        function showFeedback(message) {
+            const modal = new bootstrap.Modal(document.getElementById('feedbackModal'));
+            document.getElementById('feedbackMessage').textContent = message;
+            modal.show();
+        }
+
+        // Função para exibir modal de confirmação de exclusão
+        function showConfirmDelete(id) {
+            const modal = new bootstrap.Modal(document.getElementById('confirmModal'));
+            document.getElementById('confirmMessage').textContent = 'Deseja excluir esta memória?';
+            document.getElementById('confirmDelete').onclick = async () => {
+                try {
+                    const response = await fetch(`/api/memories/${id}`, { method: 'DELETE' });
+                    const result = await response.json();
+                    showFeedback(result.message); // Exibe "Memória apagada!"
+                    modal.hide();
+                    loadMemories();
+                } catch (error) {
+                    showFeedback('Erro ao excluir memória: ' + error.message);
+                    modal.hide();
+                }
+            };
+            modal.show();
+        }
+
+        // Carrega as memórias ao iniciar
+        loadMemories();
+    </script>
+</body>
+</html>

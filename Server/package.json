@@ -1,0 +1,14 @@
+{
+  "name": "projeto-pagina-web",
+  "version": "1.0.0",
+  "description": "Projeto Web Multitemático",
+  "main": "server/app.js",
+  "scripts": {
+    "start": "node server/app.js"
+  },
+  "dependencies": {
+    "express": "^4.17.1",
+    "ws": "^8.8.1",
+    "moment": "^2.29.4"
+  }
+}
